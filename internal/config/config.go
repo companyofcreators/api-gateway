@@ -1,19 +1,21 @@
 package config
 
 import (
+	"os"
+
 	"github.com/gookit/slog"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
 )
 
-type HTTP struct {
+type HTTPConfig struct {
 	Address string `env:"ADDRESS" env-required:"true"`
 }
 
 type RedisConfig struct {
 	Address  string `env:"ADDRESS" env-required:"true"`
-	DB       int    `env:"DB" env-required:"true"`
-	Password string `env:"PASSWORD" env-required:"true"`
+	DB       int    `env:"DB" env-default:"0"`
+	Password string `env:"PASSWORD"`
 }
 
 type LogConfig struct {
@@ -22,23 +24,29 @@ type LogConfig struct {
 }
 
 type Config struct {
-	Env string `env:"ENV" env-default:"local"`
-
-	HTTP HTTP `env-prefix:"HTTP_"`
-
+	Env  string `env:"ENV" env-default:"dev"`
+	HTTP HTTPConfig `env-prefix:"HTTP_"`
 	Redis RedisConfig `env-prefix:"REDIS_"`
 	Log   LogConfig   `env-prefix:"LOG_"`
+
+	JWTPublicKeyPath string `env:"JWT_PUBLIC_KEY_PATH" env-default:"/app/keys/public.pem"`
+
+	AuthServiceURL         string `env:"AUTH_SERVICE_URL" env-default:"http://auth-service:8081"`
+	UserServiceURL         string `env:"USER_SERVICE_URL" env-default:"http://user-service:8082"`
+	OrderServiceURL        string `env:"ORDER_SERVICE_URL" env-default:"http://order-service:8083"`
+	OfferServiceURL        string `env:"OFFER_SERVICE_URL" env-default:"http://offer-service:8084"`
+	ChatServiceURL         string `env:"CHAT_SERVICE_URL" env-default:"http://chat-service:8085"`
+	FileServiceURL         string `env:"FILE_SERVICE_URL" env-default:"http://file-service:8086"`
+	NotificationServiceURL string `env:"NOTIFICATION_SERVICE_URL" env-default:"http://notification-service:8087"`
 }
 
 func Load() *Config {
-	if err := godotenv.Load(); err != nil {
-		slog.Fatal("Error loading .env file", err)
-	}
+	_ = godotenv.Load(".env")
 
 	var cfg Config
-	if err := cleanenv.ReadEnv(&cfg); err != nil {
-		slog.Error("Error reading env", err)
-		return nil
+	if err := cleanenv.ReadConfig(".env", &cfg); err != nil {
+		slog.Errorf("error reading config: %v", err)
+		os.Exit(1)
 	}
 
 	return &cfg
