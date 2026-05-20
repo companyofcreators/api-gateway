@@ -74,7 +74,7 @@ func NewRateLimitMiddleware(
 				w.WriteHeader(http.StatusTooManyRequests)
 
 				_, _ = w.Write([]byte(
-					`{"message":"rate limit exceeded"}`,
+					`{"error":"слишком много запросов","message":"превышен лимит запросов, попробуйте позже"}`,
 				))
 
 				return

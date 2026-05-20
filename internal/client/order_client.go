@@ -38,7 +38,7 @@ func NewOrderClient(baseURL string) *OrderClient {
 // GetOrders fetches orders for the given user ID from the order-service.
 // It limits results to the 5 most recent orders.
 func (c *OrderClient) GetOrders(userID string, incomingHeaders http.Header) ([]Order, error) {
-	url := fmt.Sprintf("%s/api/v1/orders?user_id=%s&limit=5", c.baseURL, userID)
+	url := fmt.Sprintf("%s/internal/orders?user_id=%s&limit=5", c.baseURL, userID)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

@@ -35,7 +35,7 @@ func Recovery(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 
 			resp := map[string]string{
-				"error":  "internal server error",
+				"error":  "внутренняя ошибка сервера",
 				"request_id": requestID,
 			}
 

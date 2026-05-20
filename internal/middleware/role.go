@@ -26,12 +26,12 @@ func RequireRoles(roles ...string) func(http.Handler) http.Handler {
 			userRole := r.Header.Get("X-User-Role")
 
 			if userRole == "" {
-				writeForbiddenError(w, r, "missing role information", nil)
+				writeForbiddenError(w, r, "отсутствует информация о роли", nil)
 				return
 			}
 
 			if !allowed[userRole] {
-				writeForbiddenError(w, r, "insufficient permissions", &userRole)
+				writeForbiddenError(w, r, "недостаточно прав", &userRole)
 				return
 			}
 

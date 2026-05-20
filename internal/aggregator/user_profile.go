@@ -28,7 +28,7 @@ func UserProfileHandler(userClient *client.UserClient, orderClient *client.Order
 		userID := r.Header.Get("X-User-Id")
 		if userID == "" {
 			writeJSON(w, http.StatusUnauthorized, map[string]string{
-				"error": "user not authenticated",
+				"error": "пользователь не авторизован",
 			})
 			return
 		}
@@ -38,12 +38,12 @@ func UserProfileHandler(userClient *client.UserClient, orderClient *client.Order
 		// Fetch profile from user-service.
 		profile, err := userClient.GetProfile(userID, incomingHeaders)
 		if err != nil {
-			slog.Error("failed to fetch user profile",
+			slog.Error("не удалось получить профиль пользователя",
 				"error", err,
 				"user_id", userID,
 			)
 			writeJSON(w, http.StatusBadGateway, map[string]string{
-				"error": "failed to fetch user profile",
+				"error": "не удалось получить профиль пользователя",
 			})
 			return
 		}

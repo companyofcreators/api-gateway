@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"embed"
 	"net/http"
 	"time"
 
@@ -36,7 +37,7 @@ type Container struct {
 
 // NewContainer initializes all dependencies, wires up the middleware pipeline,
 // registers routes, and returns a ready-to-use Container.
-func NewContainer(cfg *config.Config) *Container {
+func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 	logger.Init(cfg)
 
 	// ---- Redis ----
@@ -68,12 +69,17 @@ func NewContainer(cfg *config.Config) *Container {
 	routeMap := map[string]string{
 		"/api/v1/auth/":          cfg.AuthServiceURL,
 		"/api/v1/users/":         cfg.UserServiceURL,
+		"/api/v1/masters/":       cfg.UserServiceURL,
 		"/api/v1/orders/":        cfg.OrderServiceURL,
+		"/api/v1/categories/":    cfg.OrderServiceURL,
+		"/api/v1/reviews/":       cfg.OrderServiceURL,
+		"/api/v1/complaints/":    cfg.OrderServiceURL,
 		"/api/v1/offers/":        cfg.OfferServiceURL,
 		"/api/v1/chat/":          cfg.ChatServiceURL,
+		"/api/v1/chats/":         cfg.ChatServiceURL,
 		"/api/v1/files/":         cfg.FileServiceURL,
 		"/api/v1/notifications/": cfg.NotificationServiceURL,
-		"/api/v1/admin/":         cfg.AuthServiceURL, // admin routes go through auth-service for RBAC
+		"/api/v1/admin/":         cfg.AuthServiceURL,
 	}
 	reverseProxy := proxy.NewReverseProxy(routeMap)
 
@@ -96,9 +102,17 @@ func NewContainer(cfg *config.Config) *Container {
 		Window: time.Minute,
 	}))
 	router.Use(appmiddleware.Auth(jwtValidator)) // JWT validation via cookie
+	router.Use(transporthttp.APIMiddleware(reverseProxy)) // proxy /api/v1/*
 
-	// Register routes (with role-based access control for admin/moderator routes).
-	registerRoutes(router, reverseProxy, userClient, orderClient, jwtValidator)
+	// Register routes. Admin routes use With() — safe here because NotFound
+	// is not used for /api/v1/ paths (APIMiddleware handles them first).
+	registerRoutes(router, reverseProxy, userClient, orderClient, jwtValidator, docsFS)
+
+	router.With(appmiddleware.RequireRoles("admin")).
+		Delete("/api/v1/admin/users/{id}", reverseProxy.Handler().ServeHTTP)
+
+	router.With(appmiddleware.RequireRoles("moderator", "admin")).
+		Put("/api/v1/admin/complaints/{id}", reverseProxy.Handler().ServeHTTP)
 
 	// ---- HTTP Server ----
 	httpServer := &http.Server{
@@ -130,19 +144,9 @@ func registerRoutes(
 	userClient *client.UserClient,
 	orderClient *client.OrderClient,
 	jwtValidator *auth.JWTValidator,
+	docsFS embed.FS,
 ) {
-	// Public routes are handled by the Auth middleware (it skips them).
-	// Admin-only routes and moderator-only routes get additional RBAC middleware.
-	router.Group(func(admin chi.Router) {
-		admin.Use(appmiddleware.RequireRoles("admin"))
-		admin.Delete("/api/v1/admin/users/{id}", rp.Handler().ServeHTTP)
-	})
-
-	router.Group(func(moderator chi.Router) {
-		moderator.Use(appmiddleware.RequireRoles("moderator", "admin"))
-		moderator.Put("/api/v1/admin/complaints/{id}", rp.Handler().ServeHTTP)
-	})
-
-	// Register all other routes via the transport layer.
-	transporthttp.RegisterRoutes(router, rp, userClient, orderClient)
+	// Register all routes. Admin routes use inline middleware to avoid
+	// chi's Group/With which resets NotFound handler.
+	transporthttp.RegisterRoutes(router, rp, userClient, orderClient, docsFS)
 }

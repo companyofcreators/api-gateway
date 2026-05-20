@@ -4,16 +4,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// Claims represents the JWT claims for the API gateway.
-// It embeds jwt.RegisteredClaims and adds custom fields
-// for user identity and authorization.
 type Claims struct {
 	jwt.RegisteredClaims
+	Email string   `json:"email"`
+	Roles []string `json:"roles"`
+}
 
-	// Sub is the user UUID (embedded in RegisteredClaims.Subject).
-	// Email is the user's email address.
-	Email string `json:"email"`
-
-	// Role is the user's role (e.g., "user", "moderator", "admin").
-	Role string `json:"role"`
+// RoleString returns the primary role for X-User-Role header.
+// Uses the first role from the JWT roles array (highest privilege).
+func (c Claims) RoleString() string {
+	if len(c.Roles) > 0 {
+		return c.Roles[0]
+	}
+	return ""
 }

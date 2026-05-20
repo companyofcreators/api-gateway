@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,10 +14,13 @@ import (
 	"github.com/gookit/slog"
 )
 
+//go:embed docs/*
+var docsFS embed.FS
+
 func main() {
 	cfg := config.Load()
 
-	container := app.NewContainer(cfg)
+	container := app.NewContainer(cfg, docsFS)
 
 	go func() {
 		slog.Infof("api gateway started on %s", cfg.HTTP.Address)

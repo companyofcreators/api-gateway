@@ -2,100 +2,108 @@ package proxy
 
 import (
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"strings"
 
 	"github.com/gookit/slog"
 )
 
-// ReverseProxy handles routing incoming requests to the appropriate
-// internal microservice based on path prefixes.
 type ReverseProxy struct {
-	routes map[string]*httputil.ReverseProxy
+	routes  map[string]string // prefix -> target URL
+	rewrite map[string]string // prefix -> internal rewrite path
 }
 
-// NewReverseProxy creates a ReverseProxy from a map of path prefixes to
-// target service URLs. Each key is a path prefix (e.g., "/api/v1/auth/")
-// and each value is the base URL of the target service.
-//
-// Route mappings:
-//
-//	/api/v1/auth/          -> auth-service
-//	/api/v1/users/         -> user-service
-//	/api/v1/orders/        -> order-service
-//	/api/v1/offers/        -> offer-service
-//	/api/v1/chat/          -> chat-service
-//	/api/v1/files/         -> file-service
-//	/api/v1/notifications/ -> notification-service
 func NewReverseProxy(routes map[string]string) *ReverseProxy {
-	proxyRoutes := make(map[string]*httputil.ReverseProxy, len(routes))
-
-	for prefix, target := range routes {
-		targetURL, err := url.Parse(target)
-		if err != nil {
-			slog.Errorf("invalid target URL for prefix %s: %v", prefix, err)
-			continue
-		}
-
-		proxy := httputil.NewSingleHostReverseProxy(targetURL)
-
-		// Preserve the original request's Host header, as well as headers
-		// set by upstream middleware (X-User-Id, X-User-Email, X-User-Role, X-Request-ID).
-		originalDirector := proxy.Director
-		proxy.Director = func(req *http.Request) {
-			originalDirector(req)
-			req.Host = targetURL.Host
-		}
-
-		// Handle proxy errors.
-		proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
-			slog.Error("proxy error",
-				"error", err,
-				"method", r.Method,
-				"path", r.URL.Path,
-				"target", target,
-			)
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusBadGateway)
-			_, _ = w.Write([]byte(`{"error":"bad gateway","message":"upstream service unavailable"}`))
-		}
-
-		proxyRoutes[prefix] = proxy
+	rewrite := map[string]string{
+		"/api/v1/auth/":          "/api/v1/auth/",
+		"/api/v1/users/":         "/internal/users/",
+		"/api/v1/masters/":       "/internal/masters/",
+		"/api/v1/orders/":        "/internal/orders/",
+		"/api/v1/categories/":    "/internal/categories/",
+		"/api/v1/reviews/":       "/internal/reviews/",
+		"/api/v1/complaints/":    "/internal/complaints/",
+		"/api/v1/offers/":        "/internal/offers/",
+		"/api/v1/chat/":          "/internal/chat/",
+		"/api/v1/chats/":         "/internal/chats/",
+		"/api/v1/files/":         "/internal/files/",
+		"/api/v1/notifications/": "/internal/notifications/",
+		"/api/v1/admin/":         "/api/v1/admin/",
 	}
-
-	return &ReverseProxy{
-		routes: proxyRoutes,
-	}
+	return &ReverseProxy{routes: routes, rewrite: rewrite}
 }
 
-// Handler returns an http.Handler that routes incoming requests by matching
-// the longest path prefix against the configured routes. If no route matches,
-// it returns a 404 JSON response.
 func (rp *ReverseProxy) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
+		if !strings.HasSuffix(path, "/") {
+			path += "/"
+		}
 
-		// Find the matching route by longest prefix match.
-		var matchedProxy *httputil.ReverseProxy
+		var target string
 		var matchedPrefix string
-
-		for prefix, proxy := range rp.routes {
-			if strings.HasPrefix(path, prefix) {
-				if len(prefix) > len(matchedPrefix) {
-					matchedPrefix = prefix
-					matchedProxy = proxy
-				}
+		for prefix, t := range rp.routes {
+			if strings.HasPrefix(path, prefix) && len(prefix) > len(matchedPrefix) {
+				target, matchedPrefix = t, prefix
 			}
 		}
 
-		if matchedProxy == nil {
+		if target == "" {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
-			_, _ = w.Write([]byte(`{"error":"not found","message":"no route matches the requested path"}`))
+			_, _ = w.Write([]byte(`{"error":"не найдено","message":"маршрут не найден"}`))
 			return
 		}
 
-		matchedProxy.ServeHTTP(w, r)
+		// Rewrite path.
+		rw := rp.rewrite[matchedPrefix]
+		if rw == "" {
+			rw = matchedPrefix
+		}
+		rest := strings.TrimPrefix(path, matchedPrefix)
+		newPath := strings.TrimRight(rw+rest, "/")
+
+		// Build proxied request.
+		proxyReq, err := http.NewRequestWithContext(r.Context(), r.Method, target+newPath, r.Body)
+		if err != nil {
+			slog.Error("proxy create request", "error", err)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte(`{"error":"внутренняя ошибка","message":"не удалось создать прокси-запрос"}`))
+			return
+		}
+
+		// Copy headers (X-User-Id, X-User-Email, X-User-Role, etc.).
+		for key, values := range r.Header {
+			for _, v := range values {
+				proxyReq.Header.Add(key, v)
+			}
+		}
+
+		resp, err := http.DefaultClient.Do(proxyReq)
+		if err != nil {
+			slog.Error("proxy request failed", "error", err, "target", target+newPath)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadGateway)
+			_, _ = w.Write([]byte(`{"error":"шлюз недоступен","message":"внутренний сервис не отвечает"}`))
+			return
+		}
+		defer resp.Body.Close()
+
+		// Copy response.
+		for key, values := range resp.Header {
+			w.Header()[key] = values
+		}
+		w.WriteHeader(resp.StatusCode)
+		if resp.Body != nil {
+			buf := make([]byte, 32*1024)
+			for {
+				n, err := resp.Body.Read(buf)
+				if n > 0 {
+					w.Write(buf[:n])
+				}
+				if err != nil {
+					break
+				}
+			}
+		}
 	})
 }

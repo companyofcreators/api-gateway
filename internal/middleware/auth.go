@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -22,10 +23,13 @@ const (
 func PublicPaths() map[string]bool {
 	return map[string]bool{
 		"/health":                    true,
+		"/docs":                      true,
+		"/docs/":                     true,
 		"/api/v1/auth/register":      true,
 		"/api/v1/auth/login":         true,
 		"/api/v1/auth/refresh":       true,
-		"/api/v1/auth/logout":        true,
+		"/api/v1/auth/verify-email":  true,
+		"/api/v1/categories":         true,
 	}
 }
 
@@ -63,13 +67,13 @@ func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
 			// Extract JWT from the "access_token" cookie.
 			cookie, err := r.Cookie("access_token")
 			if err != nil {
-				writeAuthError(w, r, "missing access_token cookie")
+				writeAuthError(w, r, "отсутствует cookie access_token")
 				return
 			}
 
 			tokenString := cookie.Value
 			if tokenString == "" {
-				writeAuthError(w, r, "empty access_token cookie")
+				writeAuthError(w, r, "пустой cookie access_token")
 				return
 			}
 
@@ -81,7 +85,7 @@ func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
 					"request_id", GetRequestID(r.Context()),
 					"path", r.URL.Path,
 				)
-				writeAuthError(w, r, "invalid or expired token")
+				writeAuthError(w, r, "недействительный или истёкший токен")
 				return
 			}
 
@@ -89,7 +93,13 @@ func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
 			userID := claims.Subject
 			r.Header.Set("X-User-Id", userID)
 			r.Header.Set("X-User-Email", claims.Email)
-			r.Header.Set("X-User-Role", claims.Role)
+			r.Header.Set("X-User-Role", claims.RoleString())
+
+			// Also set context for handlers that use string keys (e.g., logout handler).
+			ctx := context.WithValue(r.Context(), "user_id", userID)
+			ctx = context.WithValue(ctx, "user_email", claims.Email)
+			ctx = context.WithValue(ctx, "user_role", claims.RoleString())
+			r = r.WithContext(ctx)
 
 			next.ServeHTTP(w, r)
 		})
