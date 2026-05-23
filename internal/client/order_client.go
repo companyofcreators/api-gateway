@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -38,9 +39,16 @@ func NewOrderClient(baseURL string) *OrderClient {
 // GetOrders fetches orders for the given user ID from the order-service.
 // It limits results to the 5 most recent orders.
 func (c *OrderClient) GetOrders(userID string, incomingHeaders http.Header) ([]Order, error) {
-	url := fmt.Sprintf("%s/internal/orders?user_id=%s&limit=5", c.baseURL, userID)
+	u, err := url.Parse(c.baseURL + "/internal/orders")
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse URL: %w", err)
+	}
+	q := u.Query()
+	q.Set("user_id", userID)
+	q.Set("limit", "5")
+	u.RawQuery = q.Encode()
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -49,6 +57,7 @@ func (c *OrderClient) GetOrders(userID string, incomingHeaders http.Header) ([]O
 	copyHeader(req, incomingHeaders, "X-User-Id")
 	copyHeader(req, incomingHeaders, "X-User-Email")
 	copyHeader(req, incomingHeaders, "X-User-Role")
+	copyHeader(req, incomingHeaders, "X-Signature")
 	copyHeader(req, incomingHeaders, "X-Request-ID")
 
 	resp, err := c.httpClient.Do(req)
@@ -58,7 +67,10 @@ func (c *OrderClient) GetOrders(userID string, incomingHeaders http.Header) ([]O
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("order-service returned status %d (failed to read body: %w)", resp.StatusCode, err)
+		}
 		return nil, fmt.Errorf("order-service returned status %d: %s", resp.StatusCode, string(body))
 	}
 

@@ -39,7 +39,9 @@ func Recovery(next http.Handler) http.Handler {
 				"request_id": requestID,
 			}
 
-			_ = json.NewEncoder(w).Encode(resp)
+			if err := json.NewEncoder(w).Encode(resp); err != nil {
+				slog.Error("failed to encode recovery response", "error", err)
+			}
 		}()
 
 		next.ServeHTTP(w, r)

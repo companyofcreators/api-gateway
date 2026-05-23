@@ -8,8 +8,6 @@ import (
 	"time"
 
 	"github.com/companyofcreators/api-gateway/internal/domain/ratelimit"
-
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 type RateLimitConfig struct {
@@ -73,9 +71,11 @@ func NewRateLimitMiddleware(
 
 				w.WriteHeader(http.StatusTooManyRequests)
 
-				_, _ = w.Write([]byte(
+				if _, err := w.Write([]byte(
 					`{"error":"слишком много запросов","message":"превышен лимит запросов, попробуйте позже"}`,
-				))
+				)); err != nil {
+					slog.Debug("rate limit write error", "error", err)
+				}
 
 				return
 			}
@@ -86,21 +86,13 @@ func NewRateLimitMiddleware(
 }
 
 func realIP(r *http.Request) string {
-
-	ip := middleware.GetReqID(r.Context())
-
 	if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
 		return forwarded
 	}
 
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
-
-	if err != nil {
+	if err != nil || host == "" {
 		return r.RemoteAddr
-	}
-
-	if host == "" {
-		return ip
 	}
 
 	return host

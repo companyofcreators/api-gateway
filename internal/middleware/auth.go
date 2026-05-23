@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/companyofcreators/api-gateway/internal/auth"
+	"github.com/companyofcreators/api-gateway/pkg/header_auth"
 	"github.com/gookit/slog"
 )
 
@@ -40,7 +41,7 @@ func PublicPaths() map[string]bool {
 //   - Strips the Authorization header if present (security measure)
 //   - On failure: returns 401 JSON error
 //   - Skips authentication for public routes
-func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
+func Auth(validator *auth.JWTValidator, signer *header_auth.HeaderSigner) func(http.Handler) http.Handler {
 	publicPaths := PublicPaths()
 
 	return func(next http.Handler) http.Handler {
@@ -64,16 +65,19 @@ func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
 				}
 			}
 
-			// Extract JWT from the "access_token" cookie.
-			cookie, err := r.Cookie("access_token")
-			if err != nil {
-				writeAuthError(w, r, "отсутствует cookie access_token")
-				return
+			// Extract JWT from cookie (HTTP requests) or query parameter
+			// (WebSocket connections pass the token via ?token=).
+			var tokenString string
+
+			cookie, cookieErr := r.Cookie("access_token")
+			if cookieErr == nil {
+				tokenString = cookie.Value
+			} else {
+				tokenString = r.URL.Query().Get("token")
 			}
 
-			tokenString := cookie.Value
 			if tokenString == "" {
-				writeAuthError(w, r, "пустой cookie access_token")
+				writeAuthError(w, r, "отсутствует токен авторизации (cookie access_token или параметр token)")
 				return
 			}
 
@@ -95,6 +99,10 @@ func Auth(validator *auth.JWTValidator) func(http.Handler) http.Handler {
 			r.Header.Set("X-User-Email", claims.Email)
 			r.Header.Set("X-User-Role", claims.RoleString())
 
+			// Sign internal headers so backend services can verify
+			// that the headers came from the API gateway.
+			signer.SignHeaders(r)
+
 			// Also set context for handlers that use string keys (e.g., logout handler).
 			ctx := context.WithValue(r.Context(), "user_id", userID)
 			ctx = context.WithValue(ctx, "user_email", claims.Email)
@@ -115,5 +123,7 @@ func writeAuthError(w http.ResponseWriter, r *http.Request, message string) {
 		"request_id": GetRequestID(r.Context()),
 	}
 
-	_ = json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("failed to encode auth error response", "error", err)
+	}
 }

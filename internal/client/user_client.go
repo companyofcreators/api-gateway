@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -38,9 +39,9 @@ func NewUserClient(baseURL string) *UserClient {
 }
 
 func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*Profile, error) {
-	url := fmt.Sprintf("%s/internal/users/%s", c.baseURL, userID)
+	reqURL := c.baseURL + "/internal/users/" + url.PathEscape(userID)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, reqURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -48,6 +49,7 @@ func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*Pr
 	copyHeader(req, incomingHeaders, "X-User-Id")
 	copyHeader(req, incomingHeaders, "X-User-Email")
 	copyHeader(req, incomingHeaders, "X-User-Role")
+	copyHeader(req, incomingHeaders, "X-Signature")
 	copyHeader(req, incomingHeaders, "X-Request-ID")
 
 	resp, err := c.httpClient.Do(req)
@@ -57,7 +59,10 @@ func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*Pr
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("user-service returned status %d (failed to read body: %w)", resp.StatusCode, err)
+		}
 		return nil, fmt.Errorf("user-service returned status %d: %s", resp.StatusCode, string(body))
 	}
 

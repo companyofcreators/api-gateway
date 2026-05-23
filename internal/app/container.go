@@ -4,6 +4,9 @@ import (
 	"context"
 	"embed"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/companyofcreators/api-gateway/internal/auth"
@@ -15,6 +18,7 @@ import (
 	"github.com/companyofcreators/api-gateway/internal/pkg/logger"
 	"github.com/companyofcreators/api-gateway/internal/proxy"
 	transporthttp "github.com/companyofcreators/api-gateway/internal/transport/http"
+	"github.com/companyofcreators/api-gateway/pkg/header_auth"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/gookit/slog"
@@ -30,6 +34,7 @@ type Container struct {
 	RedisClient  *redis.Client
 	RateLimiter  ratelimit.Limiter
 	JWTValidator *auth.JWTValidator
+	HeaderSigner *header_auth.HeaderSigner
 	ReverseProxy *proxy.ReverseProxy
 	UserClient   *client.UserClient
 	OrderClient  *client.OrderClient
@@ -65,6 +70,10 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 	}
 	slog.Info("jwt validator initialized")
 
+	// ---- Header Signer ----
+	headerSigner := header_auth.NewHeaderSigner(cfg.HeaderHMACKey)
+	slog.Info("header signer initialized")
+
 	// ---- Reverse Proxy ----
 	routeMap := map[string]string{
 		"/api/v1/auth/":          cfg.AuthServiceURL,
@@ -81,7 +90,8 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 		"/api/v1/notifications/": cfg.NotificationServiceURL,
 		"/api/v1/admin/":         cfg.AuthServiceURL,
 	}
-	reverseProxy := proxy.NewReverseProxy(routeMap)
+	proxyHTTPClient := &http.Client{Timeout: 30 * time.Second}
+	reverseProxy := proxy.NewReverseProxy(routeMap, proxyHTTPClient)
 
 	// ---- Service Clients ----
 	userClient := client.NewUserClient(cfg.UserServiceURL)
@@ -94,25 +104,72 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 	// RequestID -> RealIP -> Recovery -> Logging -> RateLimit -> Auth -> Router
 	router.Use(appmiddleware.RequestID)      // custom: UUID-based request ID
 	router.Use(chimiddleware.RealIP)          // trust X-Forwarded-For / X-Real-IP
+	router.Use(corsMiddleware)               // allow local network access
 	router.Use(appmiddleware.Recovery)       // custom: panic recovery with structured logging
 	router.Use(appmiddleware.Logging)        // custom: structured request logging
+	router.Use(bodySizeLimiter(1 << 20))     // 1MB body limit
 	router.Use(chimiddleware.Timeout(30 * time.Second))
 	router.Use(appmiddleware.NewRateLimitMiddleware(rateLimiter, appmiddleware.RateLimitConfig{
 		Limit:  100,
 		Window: time.Minute,
 	}))
-	router.Use(appmiddleware.Auth(jwtValidator)) // JWT validation via cookie
+	router.Use(appmiddleware.Auth(jwtValidator, headerSigner)) // JWT validation via cookie
 	router.Use(transporthttp.APIMiddleware(reverseProxy)) // proxy /api/v1/*
 
 	// Register routes. Admin routes use With() — safe here because NotFound
 	// is not used for /api/v1/ paths (APIMiddleware handles them first).
-	registerRoutes(router, reverseProxy, userClient, orderClient, jwtValidator, docsFS)
+	registerRoutes(router, reverseProxy, userClient, orderClient, jwtValidator, docsFS, redisClient)
 
+	// ---- WebSocket proxy routes ----
+	// These use httputil.ReverseProxy which supports WebSocket upgrade natively.
+	// APIMiddleware skips these paths, so the router handles them directly.
+	chatWSURL, _ := url.Parse(cfg.ChatServiceURL)
+	notifyWSURL, _ := url.Parse(cfg.NotificationServiceURL)
+	orderWSURL, _ := url.Parse(cfg.OrderServiceURL)
+	offerWSURL, _ := url.Parse(cfg.OfferServiceURL)
+
+	chatWSProxy := httputil.NewSingleHostReverseProxy(chatWSURL)
+	notifyWSProxy := httputil.NewSingleHostReverseProxy(notifyWSURL)
+	orderWSProxy := httputil.NewSingleHostReverseProxy(orderWSURL)
+	offerWSProxy := httputil.NewSingleHostReverseProxy(offerWSURL)
+
+	router.Get("/api/v1/chat/ws", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/ws"
+		chatWSProxy.ServeHTTP(w, r)
+	})
+
+	router.Get("/api/v1/notifications/ws", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/ws"
+		notifyWSProxy.ServeHTTP(w, r)
+	})
+
+	router.Get("/api/v1/orders/ws", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/ws"
+		orderWSProxy.ServeHTTP(w, r)
+	})
+
+	router.Get("/api/v1/offers/ws", func(w http.ResponseWriter, r *http.Request) {
+		// Pass query params through (order_id is in the URL query)
+		r.URL.Path = "/ws"
+		offerWSProxy.ServeHTTP(w, r)
+	})
+
+	// Admin routes: each goes to the correct backend service via direct proxy.
 	router.With(appmiddleware.RequireRoles("admin")).
-		Delete("/api/v1/admin/users/{id}", reverseProxy.Handler().ServeHTTP)
+		Delete("/api/v1/admin/users/{id}",
+			reverseProxy.ProxyTo(cfg.AuthServiceURL, "/api/v1/admin/", "/api/v1/admin/"))
 
 	router.With(appmiddleware.RequireRoles("moderator", "admin")).
-		Put("/api/v1/admin/complaints/{id}", reverseProxy.Handler().ServeHTTP)
+		Patch("/api/v1/admin/complaints/{id}",
+			reverseProxy.ProxyTo(cfg.OrderServiceURL, "/api/v1/admin/", "/internal/"))
+
+	router.With(appmiddleware.RequireRoles("admin")).
+		Post("/api/v1/admin/users/{id}/ban",
+			reverseProxy.ProxyTo(cfg.AuthServiceURL, "/api/v1/admin/", "/api/v1/admin/"))
+
+	router.With(appmiddleware.RequireRoles("admin")).
+		Post("/api/v1/admin/users/{id}/unban",
+			reverseProxy.ProxyTo(cfg.AuthServiceURL, "/api/v1/admin/", "/api/v1/admin/"))
 
 	// ---- HTTP Server ----
 	httpServer := &http.Server{
@@ -131,6 +188,7 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 		RedisClient:  redisClient,
 		RateLimiter:  rateLimiter,
 		JWTValidator: jwtValidator,
+		HeaderSigner: headerSigner,
 		ReverseProxy: reverseProxy,
 		UserClient:   userClient,
 		OrderClient:  orderClient,
@@ -145,8 +203,44 @@ func registerRoutes(
 	orderClient *client.OrderClient,
 	jwtValidator *auth.JWTValidator,
 	docsFS embed.FS,
+	redisClient *redis.Client,
 ) {
 	// Register all routes. Admin routes use inline middleware to avoid
 	// chi's Group/With which resets NotFound handler.
-	transporthttp.RegisterRoutes(router, rp, userClient, orderClient, docsFS)
+	transporthttp.RegisterRoutes(router, rp, userClient, orderClient, docsFS, redisClient)
+}
+
+// bodySizeLimiter returns middleware that wraps http.MaxBytesReader to limit
+// request body size and prevent memory exhaustion attacks.
+func bodySizeLimiter(maxBytes int64) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.Body = http.MaxBytesReader(w, r.Body, maxBytes)
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// corsMiddleware allows cross-origin requests from the local network.
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if origin != "" {
+			// Allow localhost (any port) and 192.168.0.103 (any port, http or https)
+			isLocalhost := strings.Contains(origin, "//localhost:") || strings.Contains(origin, "//127.0.0.1:")
+			originLower := strings.ToLower(origin)
+			isLocalNetwork := strings.Contains(originLower, "//192.168.0.103") || strings.Contains(originLower, "//192.168.0.103:")
+			if isLocalhost || isLocalNetwork {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+				w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
+			}
+		}
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

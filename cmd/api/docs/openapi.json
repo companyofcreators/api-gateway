@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Diploma Marketplace API",
-    "description": "API documentation for the Diploma Marketplace — a microservice-based freelance exchange platform. All endpoints are proxied through the API Gateway at `localhost:8080`.",
+    "title": "Quicky API",
+    "description": "API documentation for the Quicky — a microservice-based freelance exchange platform. All endpoints are proxied through the API Gateway at `localhost:8080`.",
     "version": "1.0.0",
     "contact": {
       "name": "API Gateway",
@@ -431,11 +431,11 @@
       }
     },
     "/api/v1/orders/{id}/status": {
-      "patch": {
+      "post": {
         "tags": ["Orders"],
-        "summary": "Update order status",
-        "description": "Changes the status of an order. Follows the state machine transitions: created→{negotiation,assigned,cancelled}, negotiation→{assigned,cancelled}, assigned→{in_progress,cancelled}, in_progress→{completed,cancelled}. Requires admin, moderator, or assigned master role.",
-        "operationId": "updateOrderStatus",
+        "summary": "Обновить статус заказа",
+        "description": "Изменяет статус заказа. Следует переходам конечного автомата: created→{negotiation,assigned,cancelled}, negotiation→{assigned,cancelled}, assigned→{in_progress,cancelled}, in_progress→{completed,cancelled}. Требуется роль admin, moderator или назначенного мастера.",
+        "operationId": "updateOrderStatusPost",
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
@@ -443,7 +443,7 @@
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" },
-            "description": "Order UUID"
+            "description": "UUID заказа"
           }
         ],
         "requestBody": {
@@ -455,10 +455,40 @@
           }
         },
         "responses": {
-          "200": { "description": "Status updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Invalid status transition", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": { "description": "Статус обновлён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
+          "400": { "description": "Недопустимый переход статуса", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Не авторизован", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "403": { "description": "Доступ запрещён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "patch": {
+        "tags": ["Orders"],
+        "summary": "Обновить статус заказа",
+        "description": "Изменяет статус заказа. Следует переходам конечного автомата: created→{negotiation,assigned,cancelled}, negotiation→{assigned,cancelled}, assigned→{in_progress,cancelled}, in_progress→{completed,cancelled}. Требуется роль admin, moderator или назначенного мастера.",
+        "operationId": "updateOrderStatus",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "UUID заказа"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOrderStatusRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Статус обновлён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
+          "400": { "description": "Недопустимый переход статуса", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Не авторизован", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "403": { "description": "Доступ запрещён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
         }
       }
     },
@@ -1553,10 +1583,15 @@
       },
       "RegisterRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["email", "password", "first_name", "last_name", "phone"],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "password": { "type": "string", "format": "password", "minLength": 8, "example": "securePassword123" }
+          "email": { "type": "string", "format": "email", "example": "user@example.com", "description": "Адрес электронной почты" },
+          "password": { "type": "string", "format": "password", "minLength": 8, "example": "securePassword123", "description": "Пароль (не менее 8 символов)" },
+          "first_name": { "type": "string", "example": "Иван", "description": "Имя пользователя" },
+          "last_name": { "type": "string", "example": "Иванов", "description": "Фамилия пользователя" },
+          "middle_name": { "type": "string", "nullable": true, "example": "Иванович", "description": "Отчество пользователя (необязательно)" },
+          "birthdate": { "type": "string", "format": "date", "nullable": true, "example": "1990-01-15", "description": "Дата рождения (необязательно)" },
+          "phone": { "type": "string", "example": "+79001234567", "description": "Номер телефона" }
         }
       },
       "LoginRequest": {
@@ -1570,21 +1605,24 @@
       "TokenResponse": {
         "type": "object",
         "properties": {
-          "access_token": { "type": "string", "description": "JWT access token (also set as HTTP-only cookie)" },
-          "refresh_token": { "type": "string", "description": "JWT refresh token (set as HTTP-only cookie)" },
-          "expires_in": { "type": "integer", "description": "Access token lifetime in seconds", "example": 900 }
+          "access_token": { "type": "string", "description": "JWT access token (также устанавливается в HTTP-only cookie)" },
+          "refresh_token": { "type": "string", "description": "JWT refresh token (устанавливается в HTTP-only cookie)" },
+          "expires_in": { "type": "integer", "description": "Время жизни access token в секундах", "example": 900 },
+          "email": { "type": "string", "description": "Адрес электронной почты пользователя", "example": "user@example.com" }
         }
       },
       "UserProfile": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "first_name": { "type": "string" },
-          "last_name": { "type": "string" },
-          "avatar_url": { "type": "string", "format": "uri", "nullable": true },
-          "phone": { "type": "string", "nullable": true },
-          "birthdate": { "type": "string", "format": "date", "nullable": true },
-          "updated_at": { "type": "string", "format": "date-time" }
+          "id": { "type": "string", "format": "uuid", "description": "Уникальный идентификатор пользователя" },
+          "email": { "type": "string", "format": "email", "description": "Адрес электронной почты", "example": "user@example.com" },
+          "first_name": { "type": "string", "description": "Имя пользователя" },
+          "last_name": { "type": "string", "description": "Фамилия пользователя" },
+          "middle_name": { "type": "string", "nullable": true, "description": "Отчество пользователя" },
+          "avatar_url": { "type": "string", "format": "uri", "nullable": true, "description": "Ссылка на аватар" },
+          "phone": { "type": "string", "nullable": true, "description": "Номер телефона" },
+          "birthdate": { "type": "string", "format": "date", "nullable": true, "description": "Дата рождения" },
+          "updated_at": { "type": "string", "format": "date-time", "description": "Дата последнего обновления профиля" }
         }
       },
       "UpdateUserRequest": {

@@ -22,18 +22,19 @@ func main() {
 
 	container := app.NewContainer(cfg, docsFS)
 
+	serverErr := make(chan error, 1)
 	go func() {
 		slog.Infof("api gateway started on %s", cfg.HTTP.Address)
 
 		if err := container.HTTPServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			slog.Fatalf("http server failed: %v", err)
+			serverErr <- err
 		}
 	}()
 
-	waitShutdown(container)
+	waitShutdown(container, serverErr)
 }
 
-func waitShutdown(container *app.Container) {
+func waitShutdown(container *app.Container, serverErr <-chan error) {
 
 	quit := make(chan os.Signal, 1)
 
@@ -43,9 +44,12 @@ func waitShutdown(container *app.Container) {
 		syscall.SIGTERM,
 	)
 
-	<-quit
-
-	slog.Info("shutting down api gateway")
+	select {
+	case <-quit:
+		slog.Info("shutting down api gateway")
+	case err := <-serverErr:
+		slog.Error("http server failed", "error", err)
+	}
 
 	ctx, cancel := context.WithTimeout(
 		context.Background(),

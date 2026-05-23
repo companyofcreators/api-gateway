@@ -30,6 +30,7 @@ type Config struct {
 	Log   LogConfig   `env-prefix:"LOG_"`
 
 	JWTPublicKeyPath string `env:"JWT_PUBLIC_KEY_PATH" env-default:"/app/keys/public.pem"`
+	HeaderHMACKey    string `env:"HEADER_HMAC_KEY" env-default:"diploma-internal-hmac-secret-key-2026"`
 
 	AuthServiceURL         string `env:"AUTH_SERVICE_URL" env-default:"http://auth-service:8081"`
 	UserServiceURL         string `env:"USER_SERVICE_URL" env-default:"http://user-service:8082"`
@@ -41,7 +42,9 @@ type Config struct {
 }
 
 func Load() *Config {
-	_ = godotenv.Load(".env")
+	if err := godotenv.Load(".env"); err != nil {
+		slog.Warn(".env file not found, using environment variables", "error", err)
+	}
 
 	var cfg Config
 	if err := cleanenv.ReadConfig(".env", &cfg); err != nil {
