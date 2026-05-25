@@ -12,8 +12,11 @@ import (
 // It includes the user's profile from the user-service and their
 // recent orders from the order-service.
 type ProfileResponse struct {
-	Profile *client.Profile `json:"profile"`
-	Orders  []client.Order  `json:"orders"`
+	Profile       *client.Profile       `json:"profile"`
+	MasterProfile *client.MasterProfile `json:"master_profile,omitempty"`
+	Roles         []string              `json:"roles"`
+	Orders        []client.Order        `json:"orders"`
+	RecentOrders  []client.Order        `json:"recent_orders"`
 }
 
 // UserProfileHandler returns an http.Handler that aggregates user data
@@ -36,7 +39,7 @@ func UserProfileHandler(userClient *client.UserClient, orderClient *client.Order
 		incomingHeaders := r.Header
 
 		// Fetch profile from user-service.
-		profile, err := userClient.GetProfile(userID, incomingHeaders)
+		userProfile, err := userClient.GetProfile(userID, incomingHeaders)
 		if err != nil {
 			slog.Error("не удалось получить профиль пользователя",
 				"error", err,
@@ -60,8 +63,11 @@ func UserProfileHandler(userClient *client.UserClient, orderClient *client.Order
 		}
 
 		response := ProfileResponse{
-			Profile: profile,
-			Orders:  orders,
+			Profile:       userProfile.Profile,
+			MasterProfile: userProfile.MasterProfile,
+			Roles:         userProfile.Roles,
+			Orders:        orders,
+			RecentOrders:  orders,
 		}
 
 		writeJSON(w, http.StatusOK, response)

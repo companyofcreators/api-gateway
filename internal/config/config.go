@@ -23,11 +23,17 @@ type LogConfig struct {
 	Format string `env:"FORMAT" env-default:"text"`
 }
 
+type RateLimitConfig struct {
+	Limit         int `env:"LIMIT" env-default:"300"`
+	WindowSeconds int `env:"WINDOW_SECONDS" env-default:"60"`
+}
+
 type Config struct {
-	Env  string `env:"ENV" env-default:"dev"`
-	HTTP HTTPConfig `env-prefix:"HTTP_"`
-	Redis RedisConfig `env-prefix:"REDIS_"`
-	Log   LogConfig   `env-prefix:"LOG_"`
+	Env       string          `env:"ENV" env-default:"dev"`
+	HTTP      HTTPConfig      `env-prefix:"HTTP_"`
+	Redis     RedisConfig     `env-prefix:"REDIS_"`
+	Log       LogConfig       `env-prefix:"LOG_"`
+	RateLimit RateLimitConfig `env-prefix:"RATE_LIMIT_"`
 
 	JWTPublicKeyPath string `env:"JWT_PUBLIC_KEY_PATH" env-default:"/app/keys/public.pem"`
 	HeaderHMACKey    string `env:"HEADER_HMAC_KEY" env-default:"diploma-internal-hmac-secret-key-2026"`

@@ -19,9 +19,20 @@ type Profile struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type MasterProfile struct {
+	UserID          string  `json:"user_id"`
+	IsActive        bool    `json:"is_active"`
+	Description     string  `json:"description"`
+	ExperienceYears int     `json:"experience_years"`
+	Rating          float64 `json:"rating"`
+	CompletedOrders int     `json:"completed_orders"`
+	UpdatedAt       string  `json:"updated_at"`
+}
+
 type UserResponse struct {
-	Profile *Profile `json:"profile"`
-	Roles   []string `json:"roles"`
+	Profile       *Profile       `json:"profile"`
+	MasterProfile *MasterProfile `json:"master_profile,omitempty"`
+	Roles         []string       `json:"roles"`
 }
 
 type UserClient struct {
@@ -38,7 +49,7 @@ func NewUserClient(baseURL string) *UserClient {
 	}
 }
 
-func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*Profile, error) {
+func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*UserResponse, error) {
 	reqURL := c.baseURL + "/internal/users/" + url.PathEscape(userID)
 
 	req, err := http.NewRequest(http.MethodGet, reqURL, nil)
@@ -71,5 +82,5 @@ func (c *UserClient) GetProfile(userID string, incomingHeaders http.Header) (*Pr
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return userResp.Profile, nil
+	return &userResp, nil
 }

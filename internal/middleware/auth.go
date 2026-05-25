@@ -51,7 +51,8 @@ func Auth(validator *auth.JWTValidator, signer *header_auth.HeaderSigner) func(h
 			r.Header.Del("Authorization")
 
 			// Skip authentication for public routes.
-			if publicPaths[r.URL.Path] {
+			// GET /api/v1/categories is public, but POST/PATCH/DELETE require auth (admin).
+			if publicPaths[r.URL.Path] && !(r.URL.Path == "/api/v1/categories" && r.Method != http.MethodGet) {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -60,6 +61,10 @@ func Auth(validator *auth.JWTValidator, signer *header_auth.HeaderSigner) func(h
 			// like /api/v1/auth/login, /api/v1/auth/register, etc.)
 			for publicPath := range publicPaths {
 				if strings.HasPrefix(r.URL.Path, publicPath+"/") || r.URL.Path == publicPath {
+					// GET /api/v1/categories (and sub-paths) is public; POST/PATCH/DELETE require auth.
+					if (publicPath == "/api/v1/categories") && r.Method != http.MethodGet {
+						break
+					}
 					next.ServeHTTP(w, r)
 					return
 				}

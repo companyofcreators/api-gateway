@@ -102,19 +102,19 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 
 	// Middleware order matters:
 	// RequestID -> RealIP -> Recovery -> Logging -> RateLimit -> Auth -> Router
-	router.Use(appmiddleware.RequestID)      // custom: UUID-based request ID
-	router.Use(chimiddleware.RealIP)          // trust X-Forwarded-For / X-Real-IP
-	router.Use(corsMiddleware)               // allow local network access
-	router.Use(appmiddleware.Recovery)       // custom: panic recovery with structured logging
-	router.Use(appmiddleware.Logging)        // custom: structured request logging
-	router.Use(bodySizeLimiter(1 << 20))     // 1MB body limit
+	router.Use(appmiddleware.RequestID)  // custom: UUID-based request ID
+	router.Use(chimiddleware.RealIP)     // trust X-Forwarded-For / X-Real-IP
+	router.Use(corsMiddleware)           // allow local network access
+	router.Use(appmiddleware.Recovery)   // custom: panic recovery with structured logging
+	router.Use(appmiddleware.Logging)    // custom: structured request logging
+	router.Use(bodySizeLimiter(1 << 20)) // 1MB body limit
 	router.Use(chimiddleware.Timeout(30 * time.Second))
 	router.Use(appmiddleware.NewRateLimitMiddleware(rateLimiter, appmiddleware.RateLimitConfig{
-		Limit:  100,
-		Window: time.Minute,
+		Limit:  cfg.RateLimit.Limit,
+		Window: time.Duration(cfg.RateLimit.WindowSeconds) * time.Second,
 	}))
 	router.Use(appmiddleware.Auth(jwtValidator, headerSigner)) // JWT validation via cookie
-	router.Use(transporthttp.APIMiddleware(reverseProxy)) // proxy /api/v1/*
+	router.Use(transporthttp.APIMiddleware(reverseProxy))      // proxy /api/v1/*
 
 	// Register routes. Admin routes use With() — safe here because NotFound
 	// is not used for /api/v1/ paths (APIMiddleware handles them first).

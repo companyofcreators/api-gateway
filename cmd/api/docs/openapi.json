@@ -16,24 +16,65 @@
     }
   ],
   "tags": [
-    { "name": "Auth", "description": "Authentication and authorization endpoints" },
-    { "name": "Profile", "description": "Aggregated user profile with recent orders" },
-    { "name": "Users", "description": "User profile management" },
-    { "name": "Masters", "description": "Master profile management" },
-    { "name": "Orders", "description": "Order lifecycle management" },
-    { "name": "Categories", "description": "Order categories" },
-    { "name": "Reviews", "description": "User reviews" },
-    { "name": "Complaints", "description": "User complaints and moderation" },
-    { "name": "Offers", "description": "Offer negotiation between masters and customers" },
-    { "name": "Chat", "description": "Real-time chat via WebSocket + REST fallback" },
-    { "name": "Files", "description": "File upload and download (MinIO S3)" },
-    { "name": "Notifications", "description": "Push notifications via WebSocket and email" },
-    { "name": "Admin", "description": "Admin and moderator operations" }
+    {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints"
+    },
+    {
+      "name": "Profile",
+      "description": "Aggregated user profile with recent orders"
+    },
+    {
+      "name": "Users",
+      "description": "User profile management"
+    },
+    {
+      "name": "Masters",
+      "description": "Master profile management"
+    },
+    {
+      "name": "Orders",
+      "description": "Order lifecycle management"
+    },
+    {
+      "name": "Categories",
+      "description": "Order categories"
+    },
+    {
+      "name": "Reviews",
+      "description": "User reviews"
+    },
+    {
+      "name": "Complaints",
+      "description": "User complaints and moderation"
+    },
+    {
+      "name": "Offers",
+      "description": "Offer negotiation between masters and customers"
+    },
+    {
+      "name": "Chat",
+      "description": "Real-time chat via WebSocket + REST fallback"
+    },
+    {
+      "name": "Files",
+      "description": "File upload and download (MinIO S3)"
+    },
+    {
+      "name": "Notifications",
+      "description": "Push notifications via WebSocket and email"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin and moderator operations"
+    }
   ],
   "paths": {
     "/health": {
       "get": {
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "summary": "Health check",
         "description": "Returns the health status of the API Gateway. Always public.",
         "operationId": "healthCheck",
@@ -42,7 +83,9 @@
             "description": "Gateway is healthy",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
               }
             }
           }
@@ -51,7 +94,9 @@
     },
     "/api/v1/auth/register": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Register a new user",
         "description": "Creates a new user account. Rate-limited to 5 requests per minute per IP.",
         "operationId": "register",
@@ -59,7 +104,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
             }
           }
         },
@@ -68,19 +115,50 @@
             "description": "User registered successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
               }
             }
           },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "409": { "description": "Email already exists", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Login",
         "description": "Authenticates a user and sets access_token/refresh_token cookies. Rate-limited to 5 requests per minute per IP.",
         "operationId": "login",
@@ -88,7 +166,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
             }
           }
         },
@@ -97,18 +177,40 @@
             "description": "Login successful",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
               }
             }
           },
-          "401": { "description": "Invalid credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Refresh access token",
         "description": "Issues a new access_token using the refresh_token cookie.",
         "operationId": "refresh",
@@ -117,28 +219,45 @@
             "description": "Token refreshed",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
               }
             }
           },
-          "401": { "description": "Invalid or expired refresh token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Invalid or expired refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/logout": {
       "delete": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Logout",
         "description": "Invalidates the refresh token and clears authentication cookies.",
         "operationId": "logout",
         "responses": {
-          "204": { "description": "Logged out successfully" }
+          "204": {
+            "description": "Logged out successfully"
+          }
         }
       }
     },
     "/api/v1/auth/verify-email": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Verify email address",
         "description": "Confirms a user's email using a verification token sent via email.",
         "operationId": "verifyEmail",
@@ -147,70 +266,145 @@
             "name": "token",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Email verification token"
           }
         ],
         "responses": {
-          "200": { "description": "Email verified successfully" },
-          "400": { "description": "Invalid or expired token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Email verified successfully"
+          },
+          "400": {
+            "description": "Invalid or expired token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/profile": {
       "get": {
-        "tags": ["Profile"],
+        "tags": [
+          "Profile"
+        ],
         "summary": "Get current user profile",
         "description": "Returns the authenticated user's full profile aggregated with their recent orders. Requires authentication.",
         "operationId": "getProfile",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Full user profile",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FullProfile" }
+                "schema": {
+                  "$ref": "#/components/schemas/FullProfile"
+                }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/users/{id}": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Get user by ID",
         "description": "Returns a user's full profile. Accessible by the user themselves or admin.",
         "operationId": "getUser",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
         "responses": {
-          "200": { "description": "User profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FullProfile" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "patch": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Update user profile",
         "description": "Updates the authenticated user's profile fields. Only the requesting user or admin can update.",
         "operationId": "updateUser",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
@@ -218,95 +412,227 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateUserRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Profile updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Profile updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/users/{id}/roles/master": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Enable master role",
         "description": "Enables the master role for the specified user, allowing them to create master profiles and send offers.",
         "operationId": "enableMasterRole",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Master role enabled" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Master role enabled"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Disable master role",
         "description": "Removes the master role from the specified user.",
         "operationId": "disableMasterRole",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Master role disabled" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Master role disabled"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/masters/{id}": {
       "get": {
-        "tags": ["Masters"],
+        "tags": [
+          "Masters"
+        ],
         "summary": "Get master profile",
         "description": "Returns a master's public profile including rating and completed orders count.",
         "operationId": "getMaster",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Master user UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Master profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MasterProfile" } } } },
-          "404": { "description": "Master not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Master profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MasterProfile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Master not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "patch": {
-        "tags": ["Masters"],
+        "tags": [
+          "Masters"
+        ],
         "summary": "Update master profile",
         "description": "Updates the master profile for the authenticated user. Only the profile owner or admin can update.",
         "operationId": "updateMaster",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Master user UUID"
           }
         ],
@@ -314,80 +640,183 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateMasterRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMasterRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Master profile updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MasterProfile" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Master profile updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MasterProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders": {
       "post": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Create a new order",
         "description": "Creates a new order in the system. Publishes an `order.created` event to Kafka.",
         "operationId": "createOrder",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateOrderRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Order created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Order created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "List orders",
         "description": "Returns a filtered, paginated list of orders. Supports filtering by status, category, and customer.",
         "operationId": "listOrders",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "status",
             "in": "query",
-            "schema": { "type": "string", "enum": ["created", "negotiation", "assigned", "in_progress", "completed", "cancelled"] },
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created",
+                "negotiation",
+                "assigned",
+                "in_progress",
+                "completed",
+                "cancelled"
+              ]
+            },
             "description": "Filter by order status"
           },
           {
             "name": "category_id",
             "in": "query",
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Filter by category"
           },
           {
             "name": "customer_id",
             "in": "query",
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Filter by customer"
           },
           {
             "name": "active",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "Show only active orders (not completed/cancelled)"
           },
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 20 },
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
             "description": "Results per page"
           },
           {
             "name": "offset",
             "in": "query",
-            "schema": { "type": "integer", "default": 0 },
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
             "description": "Results offset for pagination"
           }
         ],
@@ -398,81 +827,107 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Order" }
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders/{id}": {
       "get": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Get order by ID",
         "description": "Returns a single order by its UUID.",
         "operationId": "getOrder",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Order UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Order details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Order not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders/{id}/status": {
-      "post": {
-        "tags": ["Orders"],
-        "summary": "Обновить статус заказа",
-        "description": "Изменяет статус заказа. Следует переходам конечного автомата: created→{negotiation,assigned,cancelled}, negotiation→{assigned,cancelled}, assigned→{in_progress,cancelled}, in_progress→{completed,cancelled}. Требуется роль admin, moderator или назначенного мастера.",
-        "operationId": "updateOrderStatusPost",
-        "security": [{ "cookieAuth": [] }],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" },
-            "description": "UUID заказа"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateOrderStatusRequest" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Статус обновлён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Недопустимый переход статуса", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Не авторизован", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Доступ запрещён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-        }
-      },
       "patch": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Обновить статус заказа",
         "description": "Изменяет статус заказа. Следует переходам конечного автомата: created→{negotiation,assigned,cancelled}, negotiation→{assigned,cancelled}, assigned→{in_progress,cancelled}, in_progress→{completed,cancelled}. Требуется роль admin, moderator или назначенного мастера.",
         "operationId": "updateOrderStatus",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "UUID заказа"
           }
         ],
@@ -480,79 +935,216 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateOrderStatusRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderStatusRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Статус обновлён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Недопустимый переход статуса", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Не авторизован", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Доступ запрещён", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Статус обновлён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Недопустимый переход статуса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders/{id}/cancel": {
       "post": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Cancel order",
         "description": "Cancels an order. Only the customer who created the order or an admin/moderator can cancel.",
         "operationId": "cancelOrder",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Order UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Order cancelled", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Order cannot be cancelled", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Order cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order cannot be cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders/{id}/complete": {
       "post": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Complete order",
         "description": "Marks an order as completed. Only the customer who created the order can complete it.",
         "operationId": "completeOrder",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Order UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Order completed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "400": { "description": "Order cannot be completed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Order completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order cannot be completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/orders/{id}/history": {
       "get": {
-        "tags": ["Orders"],
+        "tags": [
+          "Orders"
+        ],
         "summary": "Get order status history",
         "description": "Returns the full status change history for an order.",
         "operationId": "getOrderHistory",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Order UUID"
           }
         ],
@@ -563,19 +1155,41 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/OrderStatusHistory" }
+                  "items": {
+                    "$ref": "#/components/schemas/OrderStatusHistory"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Order not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/categories": {
       "get": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "List categories",
         "description": "Returns all categories. Can be returned as a flat list or a tree structure. Public endpoint.",
         "operationId": "listCategories",
@@ -583,7 +1197,9 @@
           {
             "name": "tree",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "Return as a tree structure (nested by parent_id)"
           }
         ],
@@ -594,7 +1210,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Category" }
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
                 }
               }
             }
@@ -602,40 +1220,93 @@
         }
       },
       "post": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "Create category",
         "description": "Creates a new order category. Admin only.",
         "operationId": "createCategory",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateCategoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Category created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Category" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Category created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/categories/{id}": {
       "patch": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "Update category",
         "description": "Updates a category name. Admin only.",
         "operationId": "updateCategory",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Category UUID"
           }
         ],
@@ -643,75 +1314,195 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateCategoryRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Category updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Category" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Category updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "Delete category",
         "description": "Deletes a category. Admin only.",
         "operationId": "deleteCategory",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Category UUID"
           }
         ],
         "responses": {
-          "204": { "description": "Category deleted" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Category not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "204": {
+            "description": "Category deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/reviews": {
       "post": {
-        "tags": ["Reviews"],
+        "tags": [
+          "Reviews"
+        ],
         "summary": "Create a review",
         "description": "Creates a review for a user after an order is completed. Rating must be 1-5.",
         "operationId": "createReview",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateReviewRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Review created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Review" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Review created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/reviews/user/{id}": {
       "get": {
-        "tags": ["Reviews"],
+        "tags": [
+          "Reviews"
+        ],
         "summary": "Get reviews for a user",
         "description": "Returns all reviews written about a specific user.",
         "operationId": "getUserReviews",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
@@ -722,42 +1513,94 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Review" }
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/complaints": {
       "post": {
-        "tags": ["Complaints"],
+        "tags": [
+          "Complaints"
+        ],
         "summary": "Create a complaint",
         "description": "Files a complaint against a user related to a specific order.",
         "operationId": "createComplaint",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateComplaintRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateComplaintRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Complaint created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Complaint" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Complaint created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Complaint"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
-        "tags": ["Complaints"],
+        "tags": [
+          "Complaints"
+        ],
         "summary": "List complaints",
         "description": "Returns all complaints. Requires moderator or admin role.",
         "operationId": "listComplaints",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of complaints",
@@ -765,29 +1608,58 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Complaint" }
+                  "items": {
+                    "$ref": "#/components/schemas/Complaint"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Moderator or admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Moderator or admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/complaints/{id}": {
       "patch": {
-        "tags": ["Complaints"],
+        "tags": [
+          "Complaints"
+        ],
         "summary": "Update complaint status",
         "description": "Updates the status of a complaint. Requires moderator or admin role.",
         "operationId": "updateComplaint",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Complaint UUID"
           }
         ],
@@ -795,57 +1667,151 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateComplaintRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateComplaintRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Complaint updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Complaint" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Moderator or admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Complaint updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Complaint"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Moderator or admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers": {
       "post": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Send an offer",
         "description": "A master sends an offer (proposal) for a specific order. Requires master role.",
         "operationId": "sendOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/SendOfferRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/SendOfferRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Offer sent", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Master role required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Offer sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Master role required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "List offers",
         "description": "Returns offers filtered by order_id or master_id.",
         "operationId": "listOffers",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "order_id",
             "in": "query",
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Filter by order"
           },
           {
             "name": "master_id",
             "in": "query",
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Filter by master"
           }
         ],
@@ -856,51 +1822,107 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Offer" }
+                  "items": {
+                    "$ref": "#/components/schemas/Offer"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}": {
       "get": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Get offer by ID",
         "description": "Returns a single offer with its current status.",
         "operationId": "getOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Offer UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Offer details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Offer not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Offer details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Offer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}/history": {
       "get": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Get offer negotiation history",
         "description": "Returns all negotiation events for an offer (sent, countered, accepted, rejected, withdrawn).",
         "operationId": "getOfferHistory",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Offer UUID"
           }
         ],
@@ -911,101 +1933,265 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/NegotiationEvent" }
+                  "items": {
+                    "$ref": "#/components/schemas/NegotiationEvent"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Offer not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Offer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}/withdraw": {
       "post": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Withdraw an offer",
         "description": "The master who made the offer withdraws it. Requires master role and ownership.",
         "operationId": "withdrawOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Offer UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Offer withdrawn", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "400": { "description": "Offer cannot be withdrawn", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Offer withdrawn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Offer cannot be withdrawn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}/accept": {
       "post": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Accept an offer",
         "description": "The customer accepts a master's offer. This triggers order assignment. Requires customer role and ownership of the order.",
         "operationId": "acceptOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Offer UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Offer accepted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "400": { "description": "Offer cannot be accepted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Offer accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Offer cannot be accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}/reject": {
       "post": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Reject an offer",
         "description": "The customer rejects a master's offer. Requires customer role and ownership of the order.",
         "operationId": "rejectOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Offer UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Offer rejected", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "400": { "description": "Offer cannot be rejected", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Offer rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Offer cannot be rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/offers/{id}/counter": {
       "post": {
-        "tags": ["Offers"],
+        "tags": [
+          "Offers"
+        ],
         "summary": "Counter-offer",
         "description": "The customer makes a counter-offer with a new price. This is part of the negotiation flow. Requires customer role.",
         "operationId": "counterOffer",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Original offer UUID"
           }
         ],
@@ -1013,21 +2199,61 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CounterOfferRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CounterOfferRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Counter-offer sent", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
-          "400": { "description": "Invalid counter-offer", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Counter-offer sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid counter-offer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/chat/ws": {
       "get": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "WebSocket connection for real-time chat",
         "description": "Establishes a WebSocket connection for real-time messaging. Requires a valid JWT token as a query parameter. Supports message types: `message.send`, `typing.start`, `typing.stop`, `messages.read`, `ping`.",
         "operationId": "chatWebSocket",
@@ -1036,23 +2262,35 @@
             "name": "token",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "JWT access token"
           }
         ],
         "responses": {
-          "101": { "description": "WebSocket upgrade successful" },
-          "401": { "description": "Invalid or missing token" }
+          "101": {
+            "description": "WebSocket upgrade successful"
+          },
+          "401": {
+            "description": "Invalid or missing token"
+          }
         }
       }
     },
     "/api/v1/chats": {
       "get": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "List chats",
         "description": "Returns all chats for the authenticated user, each with the last message and unread count.",
         "operationId": "listChats",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of chats with previews",
@@ -1060,83 +2298,180 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ChatWithPreview" }
+                  "items": {
+                    "$ref": "#/components/schemas/ChatWithPreview"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "Create a chat",
         "description": "Creates a new chat between a customer and a master for a specific order. Only one chat per order is allowed.",
         "operationId": "createChat",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateChatRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateChatRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Chat created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Chat" } } } },
-          "400": { "description": "Validation error or chat already exists", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Chat created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chat"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or chat already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/chats/{id}": {
       "get": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "Get chat by ID",
         "description": "Returns a single chat with its participants and metadata.",
         "operationId": "getChat",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Chat UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Chat details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ChatWithPreview" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Chat not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Chat details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatWithPreview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Chat not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/chats/{id}/messages": {
       "get": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "Get chat messages",
         "description": "Returns paginated messages for a chat, ordered by creation time.",
         "operationId": "getMessages",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Chat UUID"
           },
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 50 },
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
             "description": "Messages per page"
           },
           {
             "name": "offset",
             "in": "query",
-            "schema": { "type": "integer", "default": 0 },
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
             "description": "Offset for pagination"
           }
         ],
@@ -1147,27 +2482,56 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Message" }
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Chat not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Chat not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "Send a message",
         "description": "Sends a message in a chat (REST fallback for WebSocket). The sender must be a participant in the chat.",
         "operationId": "sendMessage",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Chat UUID"
           }
         ],
@@ -1175,47 +2539,111 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/SendMessageRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Message sent", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Message" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Not a chat participant", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "Message sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a chat participant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/chats/{id}/read": {
       "post": {
-        "tags": ["Chat"],
+        "tags": [
+          "Chat"
+        ],
         "summary": "Mark chat as read",
         "description": "Marks all messages in the chat as read by the authenticated user.",
         "operationId": "markChatRead",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Chat UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Chat marked as read" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Chat marked as read"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/files/upload": {
       "post": {
-        "tags": ["Files"],
+        "tags": [
+          "Files"
+        ],
         "summary": "Upload a file",
         "description": "Uploads a file to MinIO S3 storage. Supports images (JPEG, PNG, WebP, GIF), videos (MP4), and PDFs. Maximum file size: 50 MB.",
         "operationId": "uploadFile",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1230,81 +2658,208 @@
                   },
                   "file_type": {
                     "type": "string",
-                    "enum": ["avatar", "order_attachment", "chat_attachment", "document"],
+                    "enum": [
+                      "avatar",
+                      "order_attachment",
+                      "chat_attachment",
+                      "document"
+                    ],
                     "description": "Type of the file"
                   }
                 },
-                "required": ["file", "file_type"]
+                "required": [
+                  "file",
+                  "file_type"
+                ]
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "File uploaded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FileMetadata" } } } },
-          "400": { "description": "Validation error or unsupported file type", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "413": { "description": "File too large", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "201": {
+            "description": "File uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/files/{id}": {
       "get": {
-        "tags": ["Files"],
+        "tags": [
+          "Files"
+        ],
         "summary": "Get file metadata",
         "description": "Returns metadata for a file without downloading it.",
         "operationId": "getFileMetadata",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "File UUID"
           }
         ],
         "responses": {
-          "200": { "description": "File metadata", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FileMetadata" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "File not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "File metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileMetadata"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["Files"],
+        "tags": [
+          "Files"
+        ],
         "summary": "Delete a file",
         "description": "Deletes a file from storage. Only the file owner or admin can delete.",
         "operationId": "deleteFile",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "File UUID"
           }
         ],
         "responses": {
-          "204": { "description": "File deleted" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "File not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "204": {
+            "description": "File deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/files/{id}/download": {
       "get": {
-        "tags": ["Files"],
+        "tags": [
+          "Files"
+        ],
         "summary": "Download a file",
         "description": "Returns a presigned URL for downloading the file from MinIO.",
         "operationId": "downloadFile",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "File UUID"
           }
         ],
@@ -1316,35 +2871,68 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "url": { "type": "string", "format": "uri" }
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "File not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/files": {
       "get": {
-        "tags": ["Files"],
+        "tags": [
+          "Files"
+        ],
         "summary": "List files",
         "description": "Returns a paginated list of files owned by the authenticated user.",
         "operationId": "listFiles",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 20 },
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
             "description": "Results per page"
           },
           {
             "name": "offset",
             "in": "query",
-            "schema": { "type": "integer", "default": 0 },
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
             "description": "Offset for pagination"
           }
         ],
@@ -1355,18 +2943,31 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/FileMetadata" }
+                  "items": {
+                    "$ref": "#/components/schemas/FileMetadata"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/notifications/ws": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "WebSocket for real-time notifications",
         "description": "Establishes a WebSocket connection to receive real-time push notifications.",
         "operationId": "notificationWebSocket",
@@ -1375,34 +2976,53 @@
             "name": "user_id",
             "in": "query",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID to subscribe for notifications"
           }
         ],
         "responses": {
-          "101": { "description": "WebSocket upgrade successful" },
-          "400": { "description": "Missing user_id parameter" }
+          "101": {
+            "description": "WebSocket upgrade successful"
+          },
+          "400": {
+            "description": "Missing user_id parameter"
+          }
         }
       }
     },
     "/api/v1/notifications": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "List notifications",
         "description": "Returns paginated notifications for the authenticated user.",
         "operationId": "listNotifications",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 20 },
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
             "description": "Results per page"
           },
           {
             "name": "offset",
             "in": "query",
-            "schema": { "type": "integer", "default": 0 },
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
             "description": "Offset for pagination"
           }
         ],
@@ -1413,131 +3033,281 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Notification" }
+                  "items": {
+                    "$ref": "#/components/schemas/Notification"
+                  }
                 }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/notifications/unread-count": {
       "get": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Get unread notification count",
         "description": "Returns the number of unread notifications for the authenticated user.",
         "operationId": "getUnreadCount",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Unread count",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UnreadCountResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/UnreadCountResponse"
+                }
               }
             }
           },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/notifications/read-all": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Mark all notifications as read",
         "description": "Marks all notifications for the authenticated user as read.",
         "operationId": "markAllRead",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
-          "200": { "description": "All notifications marked as read" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "All notifications marked as read"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/notifications/{id}/read": {
       "post": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Mark a notification as read",
         "description": "Marks a single notification as read.",
         "operationId": "markNotificationRead",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Notification UUID"
           }
         ],
         "responses": {
-          "200": { "description": "Notification marked as read" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Notification not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Notification marked as read"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Notification not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/notifications/{id}": {
       "delete": {
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "summary": "Delete a notification",
         "description": "Deletes a single notification for the authenticated user.",
         "operationId": "deleteNotification",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Notification UUID"
           }
         ],
         "responses": {
-          "204": { "description": "Notification deleted" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Notification not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "204": {
+            "description": "Notification deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Notification not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/users/{id}": {
       "delete": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Delete a user",
         "description": "Permanently deletes a user account. Admin only.",
         "operationId": "adminDeleteUser",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "User UUID"
           }
         ],
         "responses": {
-          "204": { "description": "User deleted" },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "204": {
+            "description": "User deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/complaints/{id}": {
-      "put": {
-        "tags": ["Admin"],
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
         "summary": "Update complaint (admin/moderator)",
         "description": "Updates the status of a complaint. Requires moderator or admin role.",
         "operationId": "adminUpdateComplaint",
-        "security": [{ "cookieAuth": [] }],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" },
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
             "description": "Complaint UUID"
           }
         ],
@@ -1545,15 +3315,115 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateComplaintRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateComplaintRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Complaint updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Complaint" } } } },
-          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Not authenticated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Moderator or admin only", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          "200": {
+            "description": "Complaint updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Complaint"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Moderator or admin only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}/ban": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Заблокировать пользователя",
+        "description": "Блокирует пользователя по ID. Только для администраторов.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пользователь заблокирован"
+          },
+          "403": {
+            "description": "Доступ запрещён"
+          },
+          "404": {
+            "description": "Пользователь не найден"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}/unban": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Разблокировать пользователя",
+        "description": "Разблокирует пользователя по ID. Только для администраторов.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Пользователь разблокирован"
+          },
+          "403": {
+            "description": "Доступ запрещён"
+          },
+          "404": {
+            "description": "Пользователь не найден"
+          }
         }
       }
     }
@@ -1571,355 +3441,981 @@
       "HealthResponse": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "example": "ok" }
+          "status": {
+            "type": "string",
+            "example": "ok"
+          }
         }
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "error": { "type": "string", "description": "Error message" },
-          "request_id": { "type": "string", "format": "uuid", "description": "Request ID for tracing" }
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Request ID for tracing"
+          }
         }
       },
       "RegisterRequest": {
         "type": "object",
-        "required": ["email", "password", "first_name", "last_name", "phone"],
+        "required": [
+          "email",
+          "password",
+          "first_name",
+          "last_name",
+          "phone"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com", "description": "Адрес электронной почты" },
-          "password": { "type": "string", "format": "password", "minLength": 8, "example": "securePassword123", "description": "Пароль (не менее 8 символов)" },
-          "first_name": { "type": "string", "example": "Иван", "description": "Имя пользователя" },
-          "last_name": { "type": "string", "example": "Иванов", "description": "Фамилия пользователя" },
-          "middle_name": { "type": "string", "nullable": true, "example": "Иванович", "description": "Отчество пользователя (необязательно)" },
-          "birthdate": { "type": "string", "format": "date", "nullable": true, "example": "1990-01-15", "description": "Дата рождения (необязательно)" },
-          "phone": { "type": "string", "example": "+79001234567", "description": "Номер телефона" }
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com",
+            "description": "Адрес электронной почты"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "example": "securePassword123",
+            "description": "Пароль (не менее 8 символов)"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "Иван",
+            "description": "Имя пользователя"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "Иванов",
+            "description": "Фамилия пользователя"
+          },
+          "middle_name": {
+            "type": "string",
+            "nullable": true,
+            "example": "Иванович",
+            "description": "Отчество пользователя (необязательно)"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "example": "1990-01-15",
+            "description": "Дата рождения (необязательно)"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+79001234567",
+            "description": "Номер телефона"
+          }
         }
       },
       "LoginRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "password": { "type": "string", "format": "password", "example": "securePassword123" }
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "securePassword123"
+          }
         }
       },
       "TokenResponse": {
         "type": "object",
         "properties": {
-          "access_token": { "type": "string", "description": "JWT access token (также устанавливается в HTTP-only cookie)" },
-          "refresh_token": { "type": "string", "description": "JWT refresh token (устанавливается в HTTP-only cookie)" },
-          "expires_in": { "type": "integer", "description": "Время жизни access token в секундах", "example": 900 },
-          "email": { "type": "string", "description": "Адрес электронной почты пользователя", "example": "user@example.com" }
+          "access_token": {
+            "type": "string",
+            "description": "JWT access token (также устанавливается в HTTP-only cookie)"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "JWT refresh token (устанавливается в HTTP-only cookie)"
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Время жизни access token в секундах",
+            "example": 900
+          },
+          "email": {
+            "type": "string",
+            "description": "Адрес электронной почты пользователя",
+            "example": "user@example.com"
+          }
         }
       },
       "UserProfile": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid", "description": "Уникальный идентификатор пользователя" },
-          "email": { "type": "string", "format": "email", "description": "Адрес электронной почты", "example": "user@example.com" },
-          "first_name": { "type": "string", "description": "Имя пользователя" },
-          "last_name": { "type": "string", "description": "Фамилия пользователя" },
-          "middle_name": { "type": "string", "nullable": true, "description": "Отчество пользователя" },
-          "avatar_url": { "type": "string", "format": "uri", "nullable": true, "description": "Ссылка на аватар" },
-          "phone": { "type": "string", "nullable": true, "description": "Номер телефона" },
-          "birthdate": { "type": "string", "format": "date", "nullable": true, "description": "Дата рождения" },
-          "updated_at": { "type": "string", "format": "date-time", "description": "Дата последнего обновления профиля" }
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Уникальный идентификатор пользователя"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Адрес электронной почты",
+            "example": "user@example.com"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Имя пользователя"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Фамилия пользователя"
+          },
+          "middle_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Отчество пользователя"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Ссылка на аватар"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Номер телефона"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Дата рождения"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Дата последнего обновления профиля"
+          }
         }
       },
       "UpdateUserRequest": {
         "type": "object",
         "properties": {
-          "first_name": { "type": "string" },
-          "last_name": { "type": "string" },
-          "avatar_url": { "type": "string", "format": "uri", "nullable": true },
-          "phone": { "type": "string", "nullable": true },
-          "birthdate": { "type": "string", "format": "date", "nullable": true }
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
         }
       },
       "MasterProfile": {
         "type": "object",
         "properties": {
-          "user_id": { "type": "string", "format": "uuid" },
-          "is_active": { "type": "boolean" },
-          "description": { "type": "string", "nullable": true },
-          "experience_years": { "type": "integer", "nullable": true },
-          "rating": { "type": "number", "format": "decimal", "description": "Average rating (0.00-5.00)", "example": 4.85 },
-          "completed_orders": { "type": "integer" }
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "experience_years": {
+            "type": "integer",
+            "nullable": true
+          },
+          "rating": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Average rating (0.00-5.00)",
+            "example": 4.85
+          },
+          "completed_orders": {
+            "type": "integer"
+          }
         }
       },
       "UpdateMasterRequest": {
         "type": "object",
         "properties": {
-          "is_active": { "type": "boolean" },
-          "description": { "type": "string" },
-          "experience_years": { "type": "integer" }
+          "is_active": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "experience_years": {
+            "type": "integer"
+          }
         }
       },
       "FullProfile": {
         "type": "object",
         "properties": {
-          "user": { "$ref": "#/components/schemas/UserProfile" },
-          "master": { "$ref": "#/components/schemas/MasterProfile", "nullable": true },
+          "user": {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          "master": {
+            "$ref": "#/components/schemas/MasterProfile",
+            "nullable": true
+          },
           "roles": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "User roles (user, master, moderator, admin)"
           },
           "recent_orders": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Order" },
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            },
             "nullable": true
           }
         }
       },
       "CreateOrderRequest": {
         "type": "object",
-        "required": ["category_id", "title", "description", "address"],
+        "required": [
+          "category_id",
+          "title",
+          "description",
+          "address"
+        ],
         "properties": {
-          "category_id": { "type": "string", "format": "uuid", "description": "Category UUID" },
-          "title": { "type": "string", "description": "Short order title" },
-          "description": { "type": "string", "description": "Detailed order description" },
-          "address": { "type": "string", "description": "Physical address" },
-          "lat": { "type": "number", "format": "float", "nullable": true, "description": "Latitude" },
-          "lng": { "type": "number", "format": "float", "nullable": true, "description": "Longitude" },
-          "price": { "type": "number", "format": "decimal", "nullable": true, "description": "Suggested price" }
+          "category_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Category UUID"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short order title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed order description"
+          },
+          "address": {
+            "type": "string",
+            "description": "Physical address"
+          },
+          "lat": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Latitude"
+          },
+          "lng": {
+            "type": "number",
+            "format": "float",
+            "nullable": true,
+            "description": "Longitude"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true,
+            "description": "Suggested price"
+          }
         }
       },
       "Order": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "customer_id": { "type": "string", "format": "uuid" },
-          "accepted_offer_id": { "type": "string", "format": "uuid", "nullable": true },
-          "category_id": { "type": "string", "format": "uuid" },
-          "status": { "type": "string", "enum": ["created", "negotiation", "assigned", "in_progress", "completed", "cancelled"] },
-          "price": { "type": "number", "format": "decimal", "nullable": true },
-          "final_price": { "type": "number", "format": "decimal", "nullable": true },
-          "currency": { "type": "string", "default": "USD" },
-          "address": { "type": "string" },
-          "lat": { "type": "number", "format": "float", "nullable": true },
-          "lng": { "type": "number", "format": "float", "nullable": true },
-          "title": { "type": "string" },
-          "description": { "type": "string" },
-          "created_at": { "type": "string", "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accepted_offer_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "category_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "created",
+              "negotiation",
+              "assigned",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "final_price": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "default": "USD"
+          },
+          "address": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "lng": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "UpdateOrderStatusRequest": {
         "type": "object",
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "properties": {
-          "status": { "type": "string", "enum": ["created", "negotiation", "assigned", "in_progress", "completed", "cancelled"] }
+          "status": {
+            "type": "string",
+            "enum": [
+              "created",
+              "negotiation",
+              "assigned",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ]
+          }
         }
       },
       "OrderStatusHistory": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "old_status": { "type": "string", "nullable": true },
-          "new_status": { "type": "string" },
-          "changed_by": { "type": "string", "format": "uuid" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "old_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "new_status": {
+            "type": "string"
+          },
+          "changed_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "Category": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "parent_id": { "type": "string", "format": "uuid", "nullable": true, "description": "Parent category UUID (null for root)" },
-          "name": { "type": "string" },
-          "slug": { "type": "string" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Parent category UUID (null for root)"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreateCategoryRequest": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
-          "name": { "type": "string" },
-          "parent_id": { "type": "string", "format": "uuid", "nullable": true, "description": "Parent category UUID for subcategories" }
+          "name": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Parent category UUID for subcategories"
+          }
         }
       },
       "CreateReviewRequest": {
         "type": "object",
-        "required": ["order_id", "to_user_id", "rating"],
+        "required": [
+          "order_id",
+          "to_user_id",
+          "rating"
+        ],
         "properties": {
-          "order_id": { "type": "string", "format": "uuid" },
-          "to_user_id": { "type": "string", "format": "uuid", "description": "User being reviewed" },
-          "rating": { "type": "integer", "minimum": 1, "maximum": 5, "description": "Rating from 1 to 5" },
-          "comment": { "type": "string", "nullable": true, "description": "Optional review comment" }
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "to_user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User being reviewed"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Rating from 1 to 5"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional review comment"
+          }
         }
       },
       "Review": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "from_user_id": { "type": "string", "format": "uuid", "description": "Reviewer" },
-          "to_user_id": { "type": "string", "format": "uuid", "description": "User being reviewed" },
-          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
-          "comment": { "type": "string", "nullable": true },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from_user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Reviewer"
+          },
+          "to_user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User being reviewed"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreateComplaintRequest": {
         "type": "object",
-        "required": ["target_user_id", "order_id", "message"],
+        "required": [
+          "target_user_id",
+          "order_id",
+          "message"
+        ],
         "properties": {
-          "target_user_id": { "type": "string", "format": "uuid", "description": "User being complained about" },
-          "order_id": { "type": "string", "format": "uuid", "description": "Related order" },
-          "message": { "type": "string", "description": "Complaint details" }
+          "target_user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User being complained about"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Related order"
+          },
+          "message": {
+            "type": "string",
+            "description": "Complaint details"
+          }
         }
       },
       "Complaint": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "reporter_user_id": { "type": "string", "format": "uuid" },
-          "target_user_id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "message": { "type": "string" },
-          "status": { "type": "string", "enum": ["pending", "in_review", "resolved", "rejected"] },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reporter_user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "target_user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_review",
+              "resolved",
+              "rejected"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "UpdateComplaintRequest": {
         "type": "object",
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "properties": {
-          "status": { "type": "string", "enum": ["pending", "in_review", "resolved", "rejected"] }
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_review",
+              "resolved",
+              "rejected"
+            ]
+          }
         }
       },
       "SendOfferRequest": {
         "type": "object",
-        "required": ["order_id", "price"],
+        "required": [
+          "order_id",
+          "price"
+        ],
         "properties": {
-          "order_id": { "type": "string", "format": "uuid" },
-          "price": { "type": "number", "format": "decimal", "minimum": 0, "description": "Proposed price (must be > 0)" },
-          "message": { "type": "string", "nullable": true, "description": "Optional message from the master" }
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "minimum": 0,
+            "description": "Proposed price (must be > 0)"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional message from the master"
+          }
         }
       },
       "Offer": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "master_id": { "type": "string", "format": "uuid" },
-          "price": { "type": "number", "format": "decimal" },
-          "message": { "type": "string", "nullable": true },
-          "status": { "type": "string", "enum": ["pending", "accepted", "rejected", "withdrawn"] },
-          "created_at": { "type": "string", "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "master_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CounterOfferRequest": {
         "type": "object",
-        "required": ["price"],
+        "required": [
+          "price"
+        ],
         "properties": {
-          "price": { "type": "number", "format": "decimal", "minimum": 0, "description": "New proposed price" },
-          "message": { "type": "string", "nullable": true }
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "minimum": 0,
+            "description": "New proposed price"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
         }
       },
       "NegotiationEvent": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "offer_id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "type": { "type": "string", "enum": ["offer.sent", "countered", "accepted", "rejected", "withdrawn"], "description": "Type of negotiation event" },
-          "actor_id": { "type": "string", "format": "uuid", "description": "Who performed the action" },
-          "actor_role": { "type": "string", "enum": ["master", "customer"], "description": "Role of the actor" },
-          "price": { "type": "number", "format": "decimal" },
-          "message": { "type": "string", "nullable": true },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "offer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "offer.sent",
+              "countered",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ],
+            "description": "Type of negotiation event"
+          },
+          "actor_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Who performed the action"
+          },
+          "actor_role": {
+            "type": "string",
+            "enum": [
+              "master",
+              "customer"
+            ],
+            "description": "Role of the actor"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreateChatRequest": {
         "type": "object",
-        "required": ["order_id", "master_id"],
+        "required": [
+          "order_id",
+          "master_id"
+        ],
         "properties": {
-          "order_id": { "type": "string", "format": "uuid" },
-          "master_id": { "type": "string", "format": "uuid", "description": "Master user UUID" }
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "master_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Master user UUID"
+          }
         }
       },
       "Chat": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "customer_id": { "type": "string", "format": "uuid" },
-          "master_id": { "type": "string", "format": "uuid" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "master_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "SendMessageRequest": {
         "type": "object",
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "properties": {
-          "message": { "type": "string" },
-          "attachment_file_id": { "type": "string", "format": "uuid", "nullable": true, "description": "Optional attached file UUID" }
+          "message": {
+            "type": "string"
+          },
+          "attachment_file_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Optional attached file UUID"
+          }
         }
       },
       "Message": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "chat_id": { "type": "string", "format": "uuid" },
-          "sender_id": { "type": "string", "format": "uuid" },
-          "message": { "type": "string" },
-          "attachment_file_id": { "type": "string", "format": "uuid", "nullable": true },
-          "created_at": { "type": "string", "format": "date-time" },
-          "read_at": { "type": "string", "format": "date-time", "nullable": true }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "chat_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sender_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "message": {
+            "type": "string"
+          },
+          "attachment_file_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
         }
       },
       "ChatWithPreview": {
         "type": "object",
         "properties": {
-          "chat": { "$ref": "#/components/schemas/Chat" },
-          "last_message": { "$ref": "#/components/schemas/Message", "nullable": true },
-          "unread_count": { "type": "integer" },
-          "other_user_name": { "type": "string", "nullable": true }
+          "chat": {
+            "$ref": "#/components/schemas/Chat"
+          },
+          "last_message": {
+            "$ref": "#/components/schemas/Message",
+            "nullable": true
+          },
+          "unread_count": {
+            "type": "integer"
+          },
+          "other_user_name": {
+            "type": "string",
+            "nullable": true
+          }
         }
       },
       "FileMetadata": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "owner_id": { "type": "string", "format": "uuid" },
-          "bucket": { "type": "string" },
-          "object_key": { "type": "string" },
-          "mime_type": { "type": "string", "example": "image/jpeg" },
-          "size": { "type": "integer", "description": "File size in bytes" },
-          "file_type": { "type": "string", "enum": ["avatar", "order_attachment", "chat_attachment", "document"] },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bucket": {
+            "type": "string"
+          },
+          "object_key": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string",
+            "example": "image/jpeg"
+          },
+          "size": {
+            "type": "integer",
+            "description": "File size in bytes"
+          },
+          "file_type": {
+            "type": "string",
+            "enum": [
+              "avatar",
+              "order_attachment",
+              "chat_attachment",
+              "document"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "Notification": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "user_id": { "type": "string", "format": "uuid" },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "type": {
             "type": "string",
-            "enum": ["new_offer", "offer_accepted", "offer_rejected", "offer_countered", "offer_withdrawn", "new_message", "order_completed", "order_cancelled", "order_assigned", "new_review", "complaint_created", "complaint_updated", "role_changed", "email_verification", "system_message", "user_created"],
+            "enum": [
+              "new_offer",
+              "offer_accepted",
+              "offer_rejected",
+              "offer_countered",
+              "offer_withdrawn",
+              "new_message",
+              "order_completed",
+              "order_cancelled",
+              "order_assigned",
+              "new_review",
+              "complaint_created",
+              "complaint_updated",
+              "role_changed",
+              "email_verification",
+              "system_message",
+              "user_created"
+            ],
             "description": "Notification type"
           },
-          "title": { "type": "string" },
-          "body": { "type": "string" },
-          "data": { "type": "object", "description": "Additional JSON payload", "nullable": true },
-          "is_read": { "type": "boolean" },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "description": "Additional JSON payload",
+            "nullable": true
+          },
+          "is_read": {
+            "type": "boolean"
+          },
           "channels": {
             "type": "array",
-            "items": { "type": "string", "enum": ["websocket", "email", "push"] },
+            "items": {
+              "type": "string",
+              "enum": [
+                "websocket",
+                "email",
+                "push"
+              ]
+            },
             "description": "Delivery channels"
           },
-          "created_at": { "type": "string", "format": "date-time" }
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "UnreadCountResponse": {
         "type": "object",
         "properties": {
-          "count": { "type": "integer", "example": 5 }
+          "count": {
+            "type": "integer",
+            "example": 5
+          }
         }
       }
     }

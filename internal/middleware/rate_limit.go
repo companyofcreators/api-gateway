@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/companyofcreators/api-gateway/internal/domain/ratelimit"
@@ -23,6 +24,10 @@ func NewRateLimitMiddleware(
 	return func(next http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if isWebSocketUpgrade(r) {
+				next.ServeHTTP(w, r)
+				return
+			}
 
 			ip := realIP(r)
 
@@ -83,6 +88,11 @@ func NewRateLimitMiddleware(
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+func isWebSocketUpgrade(r *http.Request) bool {
+	return strings.EqualFold(r.Header.Get("Upgrade"), "websocket") &&
+		strings.Contains(strings.ToLower(r.Header.Get("Connection")), "upgrade")
 }
 
 func realIP(r *http.Request) string {
