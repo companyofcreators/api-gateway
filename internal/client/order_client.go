@@ -11,13 +11,23 @@ import (
 
 // Order represents an order returned by the order-service.
 type Order struct {
-	ID        string  `json:"id"`
-	UserID    string  `json:"user_id"`
-	OfferID   string  `json:"offer_id"`
-	Status    string  `json:"status"`
-	Amount    float64 `json:"amount"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
+	ID              string   `json:"id"`
+	CustomerID      string   `json:"customer_id"`
+	AcceptedOfferID *string  `json:"accepted_offer_id,omitempty"`
+	CategoryID      string   `json:"category_id"`
+	Status          string   `json:"status"`
+	Price           float64  `json:"price"`
+	FinalPrice      *float64 `json:"final_price,omitempty"`
+	Currency        string   `json:"currency"`
+	Address         string   `json:"address"`
+	Title           string   `json:"title"`
+	Description     string   `json:"description"`
+	CreatedAt       string   `json:"created_at"`
+	UpdatedAt       string   `json:"updated_at"`
+}
+
+type listOrdersResponse struct {
+	Orders []Order `json:"orders"`
 }
 
 // OrderClient is an HTTP client for the order-service internal API.
@@ -74,10 +84,10 @@ func (c *OrderClient) GetOrders(userID string, incomingHeaders http.Header) ([]O
 		return nil, fmt.Errorf("order-service returned status %d: %s", resp.StatusCode, string(body))
 	}
 
-	var orders []Order
-	if err := json.NewDecoder(resp.Body).Decode(&orders); err != nil {
+	var result listOrdersResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return orders, nil
+	return result.Orders, nil
 }
