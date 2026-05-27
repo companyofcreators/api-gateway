@@ -107,7 +107,7 @@ func NewContainer(cfg *config.Config, docsFS embed.FS) *Container {
 	router.Use(corsMiddleware)           // allow local network access
 	router.Use(appmiddleware.Recovery)   // custom: panic recovery with structured logging
 	router.Use(appmiddleware.Logging)    // custom: structured request logging
-	router.Use(bodySizeLimiter(1 << 20)) // 1MB body limit
+	router.Use(bodySizeLimiter(50 << 20)) // 50MB body limit for file uploads
 	router.Use(chimiddleware.Timeout(30 * time.Second))
 	router.Use(appmiddleware.NewRateLimitMiddleware(rateLimiter, appmiddleware.RateLimitConfig{
 		Limit:  cfg.RateLimit.Limit,

@@ -48,15 +48,32 @@ type Config struct {
 }
 
 func Load() *Config {
-	if err := godotenv.Load(".env"); err != nil {
-		slog.Warn(".env file not found, using environment variables", "error", err)
-	}
+	_ = godotenv.Load(".env") // best-effort: .env may not exist in CWD
+
+	// Set defaults for required vars if not provided (CWD may not have .env)
+	setDefaultEnv("HTTP_ADDRESS", ":8080")
+	setDefaultEnv("REDIS_ADDRESS", "localhost:6379")
+	setDefaultEnv("REDIS_PASSWORD", "")
+	setDefaultEnv("AUTH_SERVICE_URL", "http://localhost:8081")
+	setDefaultEnv("USER_SERVICE_URL", "http://localhost:8082")
+	setDefaultEnv("ORDER_SERVICE_URL", "http://localhost:8083")
+	setDefaultEnv("OFFER_SERVICE_URL", "http://localhost:8084")
+	setDefaultEnv("CHAT_SERVICE_URL", "http://localhost:8085")
+	setDefaultEnv("FILE_SERVICE_URL", "http://localhost:8086")
+	setDefaultEnv("NOTIFICATION_SERVICE_URL", "http://localhost:8087")
+	setDefaultEnv("JWT_PUBLIC_KEY_PATH", "/Users/ostapchichiginarov/Work/diploma/backend/keys/public.pem")
 
 	var cfg Config
-	if err := cleanenv.ReadConfig(".env", &cfg); err != nil {
-		slog.Errorf("error reading config: %v", err)
+	if err := cleanenv.ReadEnv(&cfg); err != nil {
+		slog.Error("failed to read config", "error", err)
 		os.Exit(1)
 	}
 
 	return &cfg
+}
+
+func setDefaultEnv(key, val string) {
+	if os.Getenv(key) == "" {
+		os.Setenv(key, val)
+	}
 }
